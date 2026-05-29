@@ -886,10 +886,14 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
+// ── PROXY CORS ─────────────────────────────────────
+const PROXY = 'https://corsproxy.io/?url=';
+
 // ── TOKEN ──────────────────────────────────────────
 async function getToken() {
   try {
-    const r = await fetch('https://api2.arduino.cc/iot/v1/clients/token', {
+    const url = PROXY + encodeURIComponent('https://api2.arduino.cc/iot/v1/clients/token');
+    const r = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: `grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${encodeURIComponent(CLIENT_SECRET)}&audience=https%3A%2F%2Fapi2.arduino.cc%2Fiot`
@@ -905,7 +909,8 @@ async function fetchData() {
   if (!token) { const ok = await getToken(); if (!ok) return; }
 
   try {
-    const r = await fetch(`https://api2.arduino.cc/iot/v2/things/${THING_ID}/properties`, {
+    const url = PROXY + encodeURIComponent(`https://api2.arduino.cc/iot/v2/things/${THING_ID}/properties`);
+    const r = await fetch(url, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
